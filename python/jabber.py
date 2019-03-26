@@ -1235,7 +1235,7 @@ def jabber_hook_commands_and_completions():
                          "  Delete an alias: /jabber alias del alias_name\n"
                          "\n"
                          "Other jabber commands:\n"
-                         "  Chat with a buddy (pv buffer): /jchat\n"
+                         "  Chat with a buddy (pv buffer): /jchat or /query\n"
                          "  Add buddy to roster:           /invite\n"
                          "  Remove buddy from roster:      /kick\n"
                          "  Send message to buddy:         /jmsg",
@@ -1253,6 +1253,11 @@ def jabber_hook_commands_and_completions():
                          " || debug",
                          "jabber_cmd_jabber", "")
     weechat.hook_command("jchat", "Chat with a Jabber buddy",
+                         "<buddy>",
+                         "buddy: buddy id",
+                         "",
+                         "jabber_cmd_jchat", "")
+    weechat.hook_command("query", "Chat with a Jabber buddy",
                          "<buddy>",
                          "buddy: buddy id",
                          "",
