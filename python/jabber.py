@@ -410,11 +410,11 @@ class Server:
         self.options = {}
         # if the value is provided, use it, otherwise use the default
         values = {}
-        for option_name, props in jabber_server_options.items():
+        for option_name, props in list(jabber_server_options.items()):
             values[option_name] = props["default"]
         values['name'] = name
         values.update(**kwargs)
-        for option_name, props in jabber_server_options.items():
+        for option_name, props in list(jabber_server_options.items()):
             self.options[option_name] = weechat.config_new_option(
                 jabber_config_file, jabber_config_section["server"],
                 self.name + "." + option_name, props["type"], props["desc"],
@@ -516,6 +516,7 @@ class Server:
                 self.client.RegisterHandler("message", self.message_handler)
                 self.client.sendInitPresence(requestRoster=1)
                 self.sock = self.client.Connection._sock.fileno()
+                weechat.prnt(self.buffer, "jabber: sock %s" % self.sock)
                 self.hook_fd = weechat.hook_fd(self.sock, 1, 0, 0, "jabber_fd_cb", "")
                 weechat.buffer_set(self.buffer, "highlight_words", self.buddy.username)
                 weechat.buffer_set(self.buffer, "localvar_set_nick", self.buddy.username);
@@ -966,7 +967,7 @@ class Server:
         self.disconnect()
         self.close_buffer()
         if deleteOptions:
-            for name, option in self.options.items():
+            for name, option in list(self.options.items()):
                 weechat.config_option_free(option)
 
 def eval_expression(option_name):
@@ -1162,7 +1163,7 @@ class Buddy:
         if self.name:
             self.alias = self.name
         global jabber_jid_aliases
-        for alias, jid in jabber_jid_aliases.items():
+        for alias, jid in list(jabber_jid_aliases.items()):
             if jid == self.bare_jid:
                 self.alias = alias
                 break
@@ -1286,7 +1287,7 @@ def jabber_list_servers_chats(name):
                             (server.option_string("server"),
                             server.option_string("port")))
                 connected = ""
-                if server.sock >= 0:
+                if server.sock and server.sock >= 0:
                     connected = "(connected)"
 
                 weechat.prnt("", "  %s - %s %s %s" % (server.name,
@@ -1536,13 +1537,13 @@ class AliasCommand(object):
             return
         jid = self.jid.encode("utf-8")
         alias = self.alias.encode("utf-8")
-        if alias in jabber_jid_aliases.keys():
+        if alias in list(jabber_jid_aliases.keys()):
             weechat.prnt("", "\njabber: unable to add alias: %s" % (alias))
             weechat.prnt("", "jabber: alias already exists, delete first")
             return
-        if jid in jabber_jid_aliases.values():
+        if jid in list(jabber_jid_aliases.values()):
             weechat.prnt("", "\njabber: unable to add alias: %s" % (alias))
-            for a, j in jabber_jid_aliases.items():
+            for a, j in list(jabber_jid_aliases.items()):
                 if j == jid:
                     weechat.prnt("", "jabber: jid '%s' is already aliased as '%s', delete first" %
                         (j, a))
@@ -1600,7 +1601,7 @@ class AliasCommand(object):
         weechat.prnt("", "jabber jid aliases:")
         len_alias = 5
         len_jid = 5
-        for alias, jid in jabber_jid_aliases.items():
+        for alias, jid in list(jabber_jid_aliases.items()):
             if len_alias < len(alias):
                 len_alias = len(alias)
             if len_jid < len(jid):
