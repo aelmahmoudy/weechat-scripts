@@ -515,7 +515,7 @@ class Server:
                 self.client.RegisterHandler("iq", self.iq_handler)
                 self.client.RegisterHandler("message", self.message_handler)
                 self.client.sendInitPresence(requestRoster=1)
-                self.sock = self.client.Connection._sock.fileno()
+                self.sock = self.client.Connection._sslObj.fileno()
                 weechat.prnt(self.buffer, "jabber: sock %s" % self.sock)
                 self.hook_fd = weechat.hook_fd(self.sock, 1, 0, 0, "jabber_fd_cb", "")
                 weechat.buffer_set(self.buffer, "highlight_words", self.buddy.username)
