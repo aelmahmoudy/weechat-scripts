@@ -853,7 +853,7 @@ class Server:
             return
         if not action in ['remove', 'update']:
             return
-        ptr_nick_gui = weechat.nicklist_search_nick(self.buffer, "", buddy.alias)
+        ptr_nick_gui = weechat.nicklist_search_nick(self.buffer, "", buddy.alias.decode('utf-8'))
         weechat.nicklist_remove_nick(self.buffer, ptr_nick_gui)
         msg = ''
         prefix = ''
@@ -863,7 +863,7 @@ class Server:
             nick_color = "bar_fg"
             if buddy.away:
                 nick_color = "weechat.color.nicklist_away"
-            weechat.nicklist_add_nick(self.buffer, "", buddy.alias,
+            weechat.nicklist_add_nick(self.buffer, "", buddy.alias.decode('utf-8'),
                                       nick_color, "", "", 1)
             if not ptr_nick_gui:
                 msg = 'joined'
