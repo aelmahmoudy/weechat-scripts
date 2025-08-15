@@ -516,7 +516,6 @@ class Server:
                 self.client.RegisterHandler("message", self.message_handler)
                 self.client.sendInitPresence(requestRoster=1)
                 self.sock = self.client.Connection._sslObj.fileno()
-                weechat.prnt(self.buffer, "jabber: sock %s" % self.sock)
                 self.hook_fd = weechat.hook_fd(self.sock, 1, 0, 0, "jabber_fd_cb", "")
                 weechat.buffer_set(self.buffer, "highlight_words", self.buddy.username)
                 weechat.buffer_set(self.buffer, "localvar_set_nick", self.buddy.username);
@@ -595,7 +594,6 @@ class Server:
             if node.getStatus():
                 status = node.getStatus().encode("utf-8")
             if self.roster:
-                weechat.prnt(self.buffer, "presence_handler: buddy.bare_jid=%s , type: %s" % (buddy.bare_jid,type(buddy.bare_jid)))
                 name = self.roster.getName(buddy.bare_jid.decode('utf-8'))
                 if name:
                     buddy.set_name(name.encode("utf-8"))
