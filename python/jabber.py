@@ -1024,11 +1024,11 @@ class Chat:
                                              "jabber_buffer_close_cb", "")
         self.buffer_title = self.buddy.alias
         if self.buffer:
-            weechat.buffer_set(self.buffer, "title", self.buffer_title)
-            weechat.buffer_set(self.buffer, "short_name", self.buddy.alias)
+            weechat.buffer_set(self.buffer, "title", self.buffer_title.decode('utf-8'))
+            weechat.buffer_set(self.buffer, "short_name", self.buddy.alias.decode('utf-8'))
             weechat.buffer_set(self.buffer, "localvar_set_type", "private")
             weechat.buffer_set(self.buffer, "localvar_set_server", server.name)
-            weechat.buffer_set(self.buffer, "localvar_set_channel", self.buddy.alias)
+            weechat.buffer_set(self.buffer, "localvar_set_channel", self.buddy.alias.decode('utf-8'))
             weechat.hook_signal_send("logger_backlog",
                                      weechat.WEECHAT_HOOK_SIGNAL_POINTER, self.buffer)
             if switch_to_buffer:
