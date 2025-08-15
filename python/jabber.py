@@ -595,7 +595,7 @@ class Server:
             if node.getStatus():
                 status = node.getStatus().encode("utf-8")
             if self.roster:
-                name = self.roster.getName(buddy.bare_jid)
+                name = self.roster.getName(buddy.bare_jid.decode('utf-8'))
                 if name:
                     buddy.set_name(name.encode("utf-8"))
             buddy.set_status(status=status, away=away)
