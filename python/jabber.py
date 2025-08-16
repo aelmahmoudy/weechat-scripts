@@ -1112,6 +1112,9 @@ class Buddy:
         self.set_alias()
         return
 
+    def __str__(self):
+        return(self.bare_jid)
+
     def away_string(self):
         """ Return a string with away and status, with color codes. """
         if not self:
