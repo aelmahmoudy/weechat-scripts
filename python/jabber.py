@@ -572,7 +572,7 @@ class Server:
         """ Print debug message for a handler on server buffer. """
         self.print_debug_server("%s_handler, xml message:\n%s"
                                 % (handler_name,
-                                   node.__str__(fancy=True).encode("utf-8")))
+                                   node.__str__(fancy=True)))
 
     def print_error(self, message):
         """ Print error message on server buffer. """
@@ -581,7 +581,7 @@ class Server:
 
     def presence_handler(self, conn, node):
         self.print_debug_handler("presence", node)
-        buddy = self.search_buddy_list(node.getFrom().getStripped().encode("utf-8"), by='jid')
+        buddy = self.search_buddy_list(node.getFrom().getStripped(), by='jid')
         if not buddy:
             buddy = self.add_buddy(jid=node.getFrom())
         action='update'
@@ -592,11 +592,11 @@ class Server:
             away = node.getShow() in ["away", "xa"]
             status = ''
             if node.getStatus():
-                status = node.getStatus().encode("utf-8")
+                status = node.getStatus()
             if self.roster:
-                name = self.roster.getName(buddy.bare_jid.decode('utf-8'))
+                name = self.roster.getName(buddy.bare_jid)
                 if name:
-                    buddy.set_name(name.encode("utf-8"))
+                    buddy.set_name(name)
             buddy.set_status(status=status, away=away)
         self.update_nicklist(buddy=buddy, action=action)
         return
@@ -640,7 +640,7 @@ class Server:
             self.add_chat(buddy)
         if buddy.chat:
             recv_object = buddy.chat
-        recv_object.recv_message(buddy, body.encode("utf-8"))
+        recv_object.recv_message(buddy, body)
 
     def recv(self):
         """ Receive something from Jabber server. """
@@ -753,7 +753,7 @@ class Server:
 
     def add_buddy(self, jid=None):
         buddy = Buddy(jid=jid, server=self)
-        buddy.resource = buddy.resource.encode("utf-8")
+        buddy.resource = buddy.resource
         self.buddies.append(buddy)
         return buddy
 
@@ -764,11 +764,11 @@ class Server:
 
         len_max = { 'alias': 5, 'jid': 5 }
         lines = []
-        for buddy in sorted(self.buddies, key=lambda x: x.jid.getStripped().encode('utf-8')):
+        for buddy in sorted(self.buddies, key=lambda x: x.jid.getStripped()):
             alias = ''
             if buddy.alias != buddy.bare_jid:
                 alias = buddy.alias
-            buddy_jid_string = buddy.jid.getStripped().encode('utf-8')
+            buddy_jid_string = buddy.jid.getStripped()
             lines.append( {
                 'jid': buddy_jid_string,
                 'alias': alias,
@@ -802,11 +802,9 @@ class Server:
         else:
             jid_str = jid.domain
         if wresource and jid.resource:
-            # concatenate jid with resource delimiter first and encode them
-            # into utf-8, else it will raise UnicodeException becaouse of
-            # slash character :((
-            return (jid_str + '/').encode("utf-8") + jid.resource.encode("utf-8")
-        return jid_str.encode("utf-8")
+            # concatenate jid with resource delimiter first
+            return (jid_str + '/') + jid.resource
+        return jid_str
 
     def search_buddy_list(self, name, by='jid'):
         """ Search for a buddy by name.
@@ -851,7 +849,7 @@ class Server:
             return
         if not action in ['remove', 'update']:
             return
-        ptr_nick_gui = weechat.nicklist_search_nick(self.buffer, "", buddy.alias.decode('utf-8'))
+        ptr_nick_gui = weechat.nicklist_search_nick(self.buffer, "", buddy.alias)
         weechat.nicklist_remove_nick(self.buffer, ptr_nick_gui)
         msg = ''
         prefix = ''
@@ -861,7 +859,7 @@ class Server:
             nick_color = "bar_fg"
             if buddy.away:
                 nick_color = "weechat.color.nicklist_away"
-            weechat.nicklist_add_nick(self.buffer, "", buddy.alias.decode('utf-8'),
+            weechat.nicklist_add_nick(self.buffer, "", buddy.alias,
                                       nick_color, "", "", 1)
             if not ptr_nick_gui:
                 msg = 'joined'
@@ -1024,11 +1022,11 @@ class Chat:
                                              "jabber_buffer_close_cb", "")
         self.buffer_title = self.buddy.alias
         if self.buffer:
-            weechat.buffer_set(self.buffer, "title", self.buffer_title.decode('utf-8'))
-            weechat.buffer_set(self.buffer, "short_name", self.buddy.alias.decode('utf-8'))
+            weechat.buffer_set(self.buffer, "title", self.buffer_title)
+            weechat.buffer_set(self.buffer, "short_name", self.buddy.alias)
             weechat.buffer_set(self.buffer, "localvar_set_type", "private")
             weechat.buffer_set(self.buffer, "localvar_set_server", server.name)
-            weechat.buffer_set(self.buffer, "localvar_set_channel", self.buddy.alias.decode('utf-8'))
+            weechat.buffer_set(self.buffer, "localvar_set_channel", self.buddy.alias)
             weechat.hook_signal_send("logger_backlog",
                                      weechat.WEECHAT_HOOK_SIGNAL_POINTER, self.buffer)
             if switch_to_buffer:
@@ -1144,7 +1142,7 @@ class Buddy:
         """
         if not self.jid:
             return
-        self.bare_jid = self.jid.getStripped().encode("utf-8")
+        self.bare_jid = self.jid.getStripped()
         self.username = self.jid.getNode()
         self.domain = self.jid.getDomain()
         self.resource = self.jid.getResource()
@@ -1534,8 +1532,8 @@ class AliasCommand(object):
             weechat.prnt("", "\njabber: invalid jid: %s" % self.jid)
             weechat.prnt("", "jabber: must be no more than %s characters long" % max_len)
             return
-        jid = self.jid.encode("utf-8")
-        alias = self.alias.encode("utf-8")
+        jid = self.jid
+        alias = self.alias
         if alias in list(jabber_jid_aliases.keys()):
             weechat.prnt("", "\njabber: unable to add alias: %s" % (alias))
             weechat.prnt("", "jabber: alias already exists, delete first")
