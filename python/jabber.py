@@ -26,6 +26,12 @@
 # Happy chat, enjoy :)
 #
 # History:
+# 2025-08-16, أحمد المحمودي <aelmahmoudy@users.sourceforge.net>
+#     version 1.7: Port to Python 3:
+#                   - Use _sslObj instead of _sock to get socket fd
+#                   - utf-8 encoding/dexoding fixes
+#                   - Add __str__ method to Buddy class which returns 
+#                     bare_jid
 # 2013-09-30, Nils Görs <freenode.nils_2>:
 #     version 1.6: add support of /secure for passwords and jid
 #                : fix stdout/stderr when no JID was set
