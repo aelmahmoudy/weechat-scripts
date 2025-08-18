@@ -1274,6 +1274,11 @@ def jabber_hook_commands_and_completions():
                          "buddy: buddy id",
                          "",
                          "jabber_cmd_kick", "")
+    weechat.hook_command("whois", "Query information about a Jabber buddy",
+                         "<buddy>",
+                         "buddy: buddy id",
+                         "",
+                         "jabber_cmd_whois", "")
     weechat.hook_completion("jabber_servers", "list of jabber servers",
                             "jabber_completion_servers", "")
     weechat.hook_completion("jabber_jid_aliases", "list of jabber jid aliases",
@@ -1481,6 +1486,21 @@ def jabber_cmd_kick(data, buffer, args):
         context = jabber_search_context(buffer)
         if context["server"]:
             context["server"].del_buddy(args)
+    return weechat.WEECHAT_RC_OK
+
+def jabber_cmd_whois(data, buffer, args):
+    """ Command '/whois'. """
+    if args:
+        context = jabber_search_context(buffer)
+        if context["server"]:
+            buddy = context["server"].search_buddy_list(args, by='alias')
+            if not buddy:
+                buddy = context["server"].add_buddy(jid=args)
+            weechat.prnt("", "%s" % (buddy.alias))
+            weechat.prnt("", "  Name: %s" % (buddy.name))
+            weechat.prnt("", "  Jabber ID/Resource: %s/%s" % (buddy.bare_jid, buddy.resource))
+            weechat.prnt("", "  Status: %s %s" % (buddy.status, buddy.away_string()))
+
     return weechat.WEECHAT_RC_OK
 
 def jabber_away_command_run_cb(data, buffer, command):
