@@ -1238,7 +1238,7 @@ def jabber_hook_commands_and_completions():
                          "  Chat with a buddy (pv buffer): /jchat or /query\n"
                          "  Add buddy to roster:           /invite\n"
                          "  Remove buddy from roster:      /kick\n"
-                         "  Send message to buddy:         /jmsg",
+                         "  Send message to buddy:         /jmsg or /msg",
                          "list %(jabber_servers)"
                          " || add %(jabber_servers)"
                          " || connect %(jabber_servers)"
@@ -1263,6 +1263,13 @@ def jabber_hook_commands_and_completions():
                          "",
                          "jabber_cmd_jchat", "")
     weechat.hook_command("jmsg", "Send a messge to a buddy",
+                         "[-server <server>] <buddy> <text>",
+                         "server: name of jabber server buddy is on\n"
+                         " buddy: buddy id\n"
+                         "  text: text to send",
+                         "",
+                         "jabber_cmd_jmsg", "")
+    weechat.hook_command("msg", "Send a messge to a buddy",
                          "[-server <server>] <buddy> <text>",
                          "server: name of jabber server buddy is on\n"
                          " buddy: buddy id\n"
